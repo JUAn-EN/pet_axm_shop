@@ -28,6 +28,7 @@ queria explicarlo para mostrar un poco de lo aprendido en clase
       }
     }
   });
+ 
   
   db.createCollection('clientes', {
     validator: {
@@ -75,4 +76,58 @@ queria explicarlo para mostrar un poco de lo aprendido en clase
     { nombre: 'Juguetes' },
     { nombre: 'Accesorios' },
     { nombre: 'Medicamentos' }
-  ]);  
+  ]);
+
+  // Insertar datos de pruebas en la colecciónes referenciando la categoría
+  /*explico esta forma de insertar ya que tiene una logica y es muy buena para dar con muchas inserciones sin algo expecifico 
+  emepezemos por esta parte categoriasList = db.categorias.find({}).toArray(); la idea es obtener la lista de las categorias en la coleccion y se almacenan en la variable categoriaList
+
+  luego la inserción
+  se ejecuta un ciclo for que itera 100 veces y en cada interacionn se elige  aleatoria mente una categoria de la lista de categorias obtenidas
+  si hay categorias disponibles, se insertan un nuevo producto en la coleccion de productos aleatorios y la id de la categoria seleccionada
+  y si no hay categorias disponibles muestra un mensaje de error .
+  para la obtencion de ids de cliente se realiza una consulta para poder obtener todas las ids de clientes y se almacenan en la variable clieneteIds.
+  La insercion de pedidos
+  lo mismo se ejecuta un ciclo que itera 100 veces
+  en cada una se selecciona aleatoria mente un id de cliente de la lista de isd de clientes obtenida
+  y se insertan un nuevo pedido en la coleccion de pedidos con datro saleatorios. Pues esta es como la logica para poder hacerlo, me ahorra un tiempo muy valioso y con esto daria un fin a esta parte de mi taller
+   */
+const categoriasList = db.categorias.find({}).toArray();
+
+for (let i = 1; i <= 100; i++) {
+  
+  const categoria = categoriasList[Math.floor(Math.random() * categoriasList.length)];
+  if (categoria) {
+    db.productos.insertOne({
+      nombre: `Producto-${i}`,
+      descripcion: `Descripción del Producto-${i}`,
+      precio: Math.random() * 100,
+      categoriaId: categoria._id
+    });
+  } else {
+    console.error("No hay categorías disponibles.");
+  }
+}
+
+for (let i = 1; i <= 100; i++) {
+    db.clientes.insertOne({
+      nombre: `Cliente-${i}`,
+      direccion: `Dirección del Cliente-${i}`,
+      email: `cliente${i}@example.com`,
+      telefono: `123-456-${i}`
+    });
+  }
+  
+  const clienteIds = db.clientes.find({}, { _id: 1 }).toArray().map(cliente => cliente._id);
+  for (let i = 1; i <= 100; i++) {
+    db.pedidos.insertOne({
+      clienteId: clienteIds[Math.floor(Math.random() * clienteIds.length)],
+      fecha: new Date(),
+      detallesEnvio: `Detalles de envío para Pedido-${i}`
+    });
+  }
+
+  db.categorias.find({});
+  db.productos.find({});
+  db.clientes.find({});
+  db.pedidos.find({});
