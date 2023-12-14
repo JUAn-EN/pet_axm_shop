@@ -1,0 +1,78 @@
+use("pet_store")
+/*
+Crear las colecciónes con sus atributos y validación
+Validator
+explico rapidamente y espero que entendible mente Validator son unas reglas de validacion que se aplican a una coleccion
+me ayuda a definir las restricciones y reglas que los documentos deben cumplir
+$jsonSchema
+es una propiedad paar especificar un esquema de validacion JSON
+bsonType
+dentro del esquema json se utiliza para especificar el tipo de datos esperado por el campo
+required
+es un arreglo que contiene los nombres de los campos que son obligatorios en cada documento
+properties: define las propiedades individuales de un documento.
+Document Validation <--documentacion de mongo de donde se puede hacer las respectivas busquedas de estos datos 
+queria explicarlo para mostrar un poco de lo aprendido en clase
+*/
+  db.createCollection('productos', {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: ['nombre', 'descripcion', 'precio', 'categoriaId'],
+        properties: {
+          nombre: { bsonType: 'string' },
+          descripcion: { bsonType: 'string' },
+          precio: { bsonType: 'double', minimum: 0 },
+          categoriaId: { bsonType: 'objectId' }
+        }
+      }
+    }
+  });
+  
+  db.createCollection('clientes', {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: ['nombre', 'direccion', 'email', 'telefono'],
+        properties: {
+          nombre: { bsonType: 'string' },
+          direccion: { bsonType: 'string' },
+          email: { bsonType: 'string' },
+          telefono: { bsonType: 'string' }
+        }
+      }
+    }
+  });
+  
+  db.createCollection('pedidos', {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: ['clienteId', 'fecha', 'detallesEnvio'],
+        properties: {
+          clienteId: { bsonType: 'objectId' },
+          fecha: { bsonType: 'date' },
+          detallesEnvio: { bsonType: 'string' }
+        }
+      }
+    }
+  });
+  
+  db.createCollection('categorias', {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: ['nombre'],
+        properties: {
+          nombre: { bsonType: 'string' }
+        }
+      }
+    }
+  });
+  
+  db.categorias.insertMany([
+    { nombre: 'Alimentos' },
+    { nombre: 'Juguetes' },
+    { nombre: 'Accesorios' },
+    { nombre: 'Medicamentos' }
+  ]);  
